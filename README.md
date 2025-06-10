@@ -1,1 +1,1 @@
-# workshop-day2-template
+# Code template for workshop Integrate Business Central with Power Platform on BC TechDays 2025
