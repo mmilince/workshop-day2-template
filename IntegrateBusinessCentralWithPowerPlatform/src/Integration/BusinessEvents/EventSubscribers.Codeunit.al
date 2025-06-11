@@ -3,32 +3,34 @@ codeunit 50104 "Event Subscribers"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Loan Events", 'OnAfterReturnedLoanLineCreated', '', false, false)]
     local procedure OnAfterReturnVehicle(LoanLine: Record "Loan Line")
     var
+        LoansBusinessEvents: Codeunit "Loans Business Events";
         LoanHeader: Record "Loan Header";
     begin
         LoanHeader.Get(LoanLine."Document No.");
 
-        //Vehicle returned business event here
+        LoansBusinessEvents.VehicleReturned(LoanHeader."No.",
+                                            LoanHeader."Contact No.",
+                                            LoanHeader."Contact Name",
+                                            LoanHeader."Contact E-Mail",
+                                            LoanLine."Vehicle No.",
+                                            LoanLine."Vehicle Name",
+                                            LoanLine.DocumentId);
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Loan Events", 'OnAfterLoanVehicle', '', false, false)]
     local procedure OnAfterLoanVehicle(LoanLine: Record "Loan Line")
     var
+        LoansBusinessEvents: Codeunit "Loans Business Events";
         LoanHeader: Record "Loan Header";
     begin
         LoanHeader.Get(LoanLine."Document No.");
 
-        //Vehicle loaned business event here
-    end;
-
-    [EventSubscriber(ObjectType::Table, Database::"Vendor Bank Account", 'OnBeforeValidateIBAN', '', false, false)]
-    local procedure OnBeforeValidateIBAN(var VendorBankAccount: Record "Vendor Bank Account"; var xVendorBankAccount: Record "Vendor Bank Account"; var IsHandled: Boolean)
-    begin
-        if xVendorBankAccount.IBAN = '' then
-            exit;
-
-        if VendorBankAccount.IBAN = xVendorBankAccount.IBAN then
-            exit;
-
-        //Vendor IBAN changed business event here
+        LoansBusinessEvents.VehicleLoaned(LoanHeader."No.",
+                                          LoanHeader."Contact No.",
+                                          LoanHeader."Contact Name",
+                                          LoanHeader."Contact E-Mail",
+                                          LoanLine."Vehicle No.",
+                                          LoanLine."Vehicle Name",
+                                          LoanLine.DocumentId);
     end;
 }
